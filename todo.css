@@ -1,0 +1,35 @@
+h1, h2 {
+  text-align: center;
+}
+
+
+.container {
+  display: block;
+  width: 800px;
+  margin: 0 auto;
+}
+
+.left-pane {
+  float: left;
+  margin: 0px 20px 0px 40px;
+}
+
+.right-pane {
+  float: left;
+  display: inline;
+  vertical-align: top;
+}
+
+#timer {
+  font-weight: bold;
+  font-size: 40px;
+  text-align: center;
+}
+
+body {
+  background-image: -o-linear-gradient(right, #E0A314 0%, #FFC42E 100%, #FFEC4A 100%, #FFFF68 100%);
+background-image: -moz-linear-gradient(right, #E0A314 0%, #FFC42E 100%, #FFEC4A 100%, #FFFF68 100%);
+background-image: -webkit-linear-gradient(right, #E0A314 0%, #FFC42E 100%, #FFEC4A 100%, #FFFF68 100%);
+background-image: -ms-linear-gradient(right, #E0A314 0%, #FFC42E 100%, #FFEC4A 100%, #FFFF68 100%);
+background-image: linear-gradient(to right, #E0A314 0%, #FFC42E 100%, #FFEC4A 100%, #FFFF68 100%);
+}

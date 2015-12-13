@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <link rel="stylesheet" href="todo.css" ></link>
+  <script src="jquery.js"></script>
+  <script src="angular.js"></script>
+
+  <style>
+  .done-true {
+    color: #aaa;
+  }
+  </style>
+</head>
+
+<body>
+  <div class='container' ng-app="app">
+    <h1>Organisation</h1>
+    <div class='left-pane' ng-controller="TodoCtrl">
+      <h2>A faire</h2>
+      <span>{{remaining()}} of {{todos.length}} remaining</span>
+      [ <a href="" ng-click="archive()">archive</a> ]
+      <ul>
+        <li ng-repeat="todo in todos">
+          <input type="checkbox" ng-model="todo.done">
+          <span class="done-{{todo.done}}">{{todo.text}}</span>
+        </li>
+      </ul>
+      <form ng-submit="addTodo()">
+        <input type="text" ng-model="todoText" size="30" placeholder="ajouter nouvel item ici">
+        <input type="submit" value="ajouter">
+      </form>
+    </div>
+
+    <div class='right-pane' ng-controller="TimerCtrl">
+      <h2> Timer </h2>
+      Timer duration :<input ng-disabled="timerStarted" ng-model="timerDuration" type="text" />
+      <button ng-disabled="timerStarted" ng-click="startTimer()">Start timer</button>
+      <button ng-disabled="!timerStarted" ng-click="pauseTimer()">Pause timer</button>
+      <p id="timer" ng-show="timerStarted"> {{timeLeft | date:"mm:ss"}} </p>
+
+    </div>
+    <div id="notification">
+    </div>
+
+  </div>
+  <script src="todo.js"></script>
+</body>
+</html>
