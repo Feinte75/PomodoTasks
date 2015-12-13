@@ -58,7 +58,7 @@ app.controller("TimerCtrl", ['$scope', '$interval', function($scope, $interval) 
     }, 1000);
   }
 
-  $scope.pauseTimer = function () {
+  $scope.stopTimer = function () {
     $scope.timerStarted = false;
     $interval.cancel(timerPromise);
   }
