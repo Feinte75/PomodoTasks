@@ -67,7 +67,7 @@ app.controller("TimerCtrl", ['$scope', '$interval', function($scope, $interval) 
   $scope.timeOut = function () {
     $('#notification').html(
       "<audio autoplay='autoplay'> \
-      <source src='notification.mp3' type='audio/mpeg' /> \
+      <source src='resources/notification.mp3' type='audio/mpeg' /> \
       </audio>");
     }
   }]);

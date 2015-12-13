@@ -1,9 +1,9 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <link rel="stylesheet" href="todo.css" ></link>
-  <script src="jquery.js"></script>
-  <script src="angular.js"></script>
+  <link rel="stylesheet" href="styles/pomodotasks.css" ></link>
+  <script src="lib/jquery.js"></script>
+  <script src="lib/angular.js"></script>
 
   <style>
   .done-true {
@@ -26,8 +26,8 @@
         </li>
       </ul>
       <form ng-submit="addTodo()">
-        <input type="text" ng-model="todoText" size="30" placeholder="ajouter nouvel item ici">
-        <input type="submit" value="ajouter">
+        <input type="text" ng-model="todoText" size="30" placeholder="Add a new item">
+        <input type="submit" value="Add">
       </form>
     </div>
 
@@ -43,6 +43,6 @@
     </div>
 
   </div>
-  <script src="todo.js"></script>
+  <script src="pomodotasksApp.js"></script>
 </body>
 </html>
