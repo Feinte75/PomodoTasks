@@ -1,17 +1,32 @@
-h1, h2 {
+h1 {
   text-align: center;
+  font-family: ‘Courier New’, Courier, monospace;
+  font-size: 2.5em;
+  color: rgb(30, 0, 57);
 }
 
+h2 {
+  text-align: center;
+  font-family: ‘Courier New’, Courier, monospace;
+}
 
 .container {
   display: block;
   width: 800px;
-  margin: 0 auto;
+  margin: 50px auto;
 }
 
 .left-pane {
   float: left;
   margin: 0px 20px 0px 40px;
+}
+
+.left-pane .done-true {
+  color: rgba(20, 255, 0, 1);
+}
+
+.left-pane .done-false {
+  color: rgba(170, 0, 0, 1);
 }
 
 .right-pane {
@@ -24,6 +39,14 @@ h1, h2 {
   font-weight: bold;
   font-size: 40px;
   text-align: center;
+}
+
+.timerHistory {
+
+}
+
+.timerHistory > ul {
+  list-style-type: circle;
 }
 
 body {

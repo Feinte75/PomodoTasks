@@ -26,7 +26,7 @@
         </li>
       </ul>
       <form ng-submit="addTodo()">
-        <input type="text" ng-model="todoText" size="30" placeholder="Add a new item">
+        <input type="text" ng-model="todoText" size="30" placeholder="Add a new item" required>
         <input type="submit" value="Add">
       </form>
     </div>
@@ -35,8 +35,18 @@
       <h2> Timer </h2>
       Timer duration :<input ng-disabled="timerStarted" ng-model="timerDuration" type="text" />
       <button ng-disabled="timerStarted" ng-click="startTimer()">Start timer</button>
-      <button ng-disabled="!timerStarted" ng-click="stopTimer()">Pause timer</button>
+      <button ng-disabled="!timerStarted" ng-click="stopTimer()">Stop timer</button>
       <p id="timer" ng-show="timerStarted"> {{timeLeft | date:"mm:ss"}} </p>
+      <p id="timer" ng-show="timeLeft === 0"> Timer Expired ! </p>
+
+      <div class="timerHistory">
+        <ul>
+          <li ng-repeat="pastTimer in timerHistory">
+            Started : {{pastTimer.start | date:"HH:mm"}} -- Ended : {{pastTimer.end | date:"HH:mm"}}
+          </li>
+        </ul>
+
+      </div>
 
     </div>
     <div id="notification">

@@ -37,7 +37,8 @@ app.controller("TimerCtrl", ['$scope', '$interval', function($scope, $interval) 
   $scope.timerDuration = 5;
   $scope.showTimeLeft = false;
   $scope.timerStarted = false;
-  $scope.timeLeft = 0;
+  $scope.timeLeft = -1; // Display "Timer Expired" when = 0
+  $scope.timerHistory = [];
 
   var timerPromise;
   var startTime = 0;
@@ -48,18 +49,24 @@ app.controller("TimerCtrl", ['$scope', '$interval', function($scope, $interval) 
     startTime = new Date().getTime();
     $scope.timeLeft = $scope.timerDuration * 60 * 1000;
 
+    // Add new timer history
+    $scope.timerHistory.unshift({start : startTime, end : '- - -'});
+
+    timerDurationMs = $scope.timerDuration * 60 *  1000;
+
     timerPromise = $interval(function() {
-      console.log("timeLeft");
-      $scope.timeLeft = ($scope.timerDuration * 60 *  1000) - (new Date().getTime() - startTime) ;
-      if($scope.timeLeft < 0) {
+      $scope.timeLeft = timerDurationMs - (new Date().getTime() - startTime);
+      if($scope.timeLeft <= 0) {
         $scope.timeOut();
-        $scope.timeLeft = 0;
+        $scope.stopTimer();
       }
     }, 1000);
   }
 
   $scope.stopTimer = function () {
     $scope.timerStarted = false;
+    $scope.timeLeft = 0;
+    $scope.timerHistory[0].end = new Date().getTime();
     $interval.cancel(timerPromise);
   }
 
