@@ -12,7 +12,6 @@ angular.module("app", [])
     },
 
     addTask : function (taskTitle) {
-      console.log('adding : ' + taskTitle);
       tasks.push({title : taskTitle, done : false});
     },
 

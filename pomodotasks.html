@@ -4,6 +4,7 @@
   <link rel="stylesheet" href="styles/pomodotasks.css" ></link>
   <script src="lib/jquery.js"></script>
   <script src="lib/angular.js"></script>
+  <script src="pomodotasksApp.js"></script>
 
   <style>
   .done-true {
@@ -13,8 +14,11 @@
 </head>
 
 <body>
+  <header>
+    <h1>PomodoTasks</h1>
+  </header>
+
   <div class='container' ng-app="app">
-    <h1>Organisation</h1>
     <div class='left-pane' ng-controller="TaskCtrl">
       <h2>Tasks</h2>
       <span>{{remaining()}} of {{tasks.length}} remaining</span>
@@ -54,6 +58,12 @@
     </div>
 
   </div>
-  <script src="pomodotasksApp.js"></script>
+  <footer>
+    Made with <a href="https://angularjs.org/" target="_blank"> AngularJs </a>
+    <br/><br/>
+    Code available on Github !
+    <br/>
+    <a href="https://github.com/Feinte75/PomodoTasks" target="_blank">Check it out</a>
+  </footer>
 </body>
 </html>
