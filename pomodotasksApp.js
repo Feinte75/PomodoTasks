@@ -1,39 +1,77 @@
-var app = angular.module("app", []);
+angular.module("app", [])
+.service("tasksService", function () {
 
-app.controller("TodoCtrl", function($scope) {
-  $scope.todos = [
-    { text: "Task Done", done:true}
-    , {text: "Todo Task", done:false}
-  ]
+  // Private data
+  var tasks = [];
+  var archivedTasks = [];
 
-  $scope.remaining = function () {
-    var done = 0;
-    for(i = 0; i < $scope.todos.length; i++) {
-      if($scope.todos[i].done)
-        done++;
+  return {
+    // Accessor
+    tasks : function () {
+      return tasks;
+    },
+
+    addTask : function (taskTitle) {
+      console.log('adding : ' + taskTitle);
+      tasks.push({title : taskTitle, done : false});
+    },
+
+    archive : function () {
+      var toArchiveTasks = tasks.slice();
+      tasks.length = 0;
+
+      toArchiveTasks.forEach(function (task, index) {
+        if(task.done == true) {
+          archivedTasks.push(task);
+        }
+        else{
+          tasks.push(task);
+        }
+      });
+    },
+    remaining : function () {
+      var done = 0;
+      tasks.forEach( function(task, index) {
+        if(task.done) {
+          done++;
+        }
+      });
+      return done;
     }
-    return done;
-  }
+  };
+})
+.service('notificationService', function () {
 
-  $scope.addTodo = function () {
-    $scope.todos.push({text:$scope.todoText, done:false});
-    $scope.todoText = '';
-  }
+  return {
+    playSound : function () {
+      $('#notification').html(
+        "<audio autoplay='autoplay'> \
+        <source src='resources/notification.mp3' type='audio/mpeg' /> \
+        </audio>");
+      }
+    }
+  })
+  .controller('TaskCtrl', ['$scope', 'tasksService', function($scope, tasksService) {
 
-  // Remove checked tasks
-  $scope.archive = function()  {
-    var oldTodos = $scope.todos;
-    $scope.todos = [];
+    // Bind view tasks to the service data
+    $scope.tasks = tasksService.tasks();
 
-    for(i = 0; i < oldTodos.length; i++) {
-      if(!oldTodos[i].done)
-        $scope.todos.push(oldTodos[i]);
+    $scope.remaining = function () {
+      return tasksService.remaining();
     }
 
-  }
-});
+    $scope.addTask = function () {
+      tasksService.addTask($scope.taskTitle);
+      $scope.taskTitle = '';
+    }
 
-app.controller("TimerCtrl", ['$scope', '$interval', function($scope, $interval) {
+    // Remove checked tasks
+    $scope.archive = function()  {
+      tasksService.archive();
+    }
+  }
+])
+.controller("TimerCtrl", ['$scope', '$interval', 'notificationService', function($scope, $interval, notificationService) {
   $scope.timerDuration = 5;
   $scope.showTimeLeft = false;
   $scope.timerStarted = false;
@@ -72,9 +110,6 @@ app.controller("TimerCtrl", ['$scope', '$interval', function($scope, $interval) 
 
   // Play sound on timer timeout
   $scope.timeOut = function () {
-    $('#notification').html(
-      "<audio autoplay='autoplay'> \
-      <source src='resources/notification.mp3' type='audio/mpeg' /> \
-      </audio>");
-    }
-  }]);
+    notificationService.playSound();
+  }
+}]);
