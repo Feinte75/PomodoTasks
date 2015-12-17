@@ -88,7 +88,8 @@ angular.module("app", [])
 ])
 .service("settingsService", function () {
   var defaultSettings = {
-    timerDuration : 25,
+    timerDuration : 0.01,
+    playSound: true,
   };
 
   var settings = {};
@@ -177,7 +178,9 @@ function($scope, $interval, notificationService, tasksService, settingsService) 
 
   // Play sound on timer timeout
   $scope.timeOut = function () {
-    notificationService.playSound();
+    if(settings.playSound == true) {
+      notificationService.playSound();
+    }
     tasksService.addPomodoro();
   }
 }])

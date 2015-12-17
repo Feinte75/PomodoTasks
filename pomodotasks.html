@@ -24,8 +24,10 @@
           <a href="#" class="closeSettings">X</a>
           <h1> Settings : </h1>
           <form>
-            Timer duration <input ng-model="settings.timerDuration"/> (Default : 25)
-            <button ng-click="applySettings()">Apply</button>
+            <ul>
+              <li>Timer duration <input ng-model="settings.timerDuration"/></li>
+              <li>Play sound on timer end <input type="checkbox" ng-model="settings.playSound"></li>
+              <li><button ng-click="applySettings()">Apply</button></li>
           </form>
         </div>
       </div>

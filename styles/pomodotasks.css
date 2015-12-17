@@ -50,6 +50,15 @@ nav .settings .closeSettings{
   box-shadow: 1px 1px 3px #000;
 }
 
+nav .settings form ul {
+  list-style: none;
+  text-align: center;
+}
+
+nav .settings form ul li {
+  margin: 10px 0px;
+}
+
 h1 {
   font-family: ‘Courier New’, Courier, monospace;
   font-size: 2.5em;
@@ -76,6 +85,7 @@ h2 {
 
 .left-pane .tasksList {
   list-style-type: none;
+  text-align: left;
 }
 
 .left-pane .done-true {
@@ -88,6 +98,7 @@ h2 {
 
 .archivedTasks {
   margin: 40px 0px;
+  text-align: left;
 }
 
 .right-pane {
