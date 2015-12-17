@@ -86,8 +86,60 @@ angular.module("app", [])
     }
   }
 ])
-.controller("TimerCtrl", ['$scope', '$interval', 'notificationService', function($scope, $interval, notificationService) {
-  $scope.timerDuration = 5;
+.service("settingsService", function () {
+  var defaultSettings = {
+    timerDuration : 25,
+  };
+
+  var settings = {};
+
+  // Handle settings menu disable when click outside
+  function modalClose() {
+      if (location.hash == '#openSettings') {
+          location.hash = '';
+      }
+  }
+
+  var modal = document.querySelector('#openSettings');
+  modal.addEventListener('click', function(e) {
+      modalClose();
+  }, false);
+
+  modal.children[0].addEventListener('click', function(e) {
+      e.stopPropagation();
+  }, false);
+
+  for (var setting in defaultSettings) {
+    if (defaultSettings.hasOwnProperty(setting)) {
+      tmp = localStorage.getItem(setting);
+      if (tmp != null) {
+        settings[setting] = tmp;
+      }
+      else {
+        settings[setting] = defaultSettings[setting];
+      }
+    }
+  }
+
+  return {
+    settings : function () {
+      return settings;
+    },
+
+    persistSettings : function () {
+      for (var setting in settings) {
+        if (settings.hasOwnProperty(setting)) {
+          localStorage.setItem(setting, settings[setting]);
+        }
+      }
+    }
+  };
+
+})
+.controller("TimerCtrl", ['$scope', '$interval', 'notificationService', 'tasksService', 'settingsService',
+function($scope, $interval, notificationService, tasksService, settingsService) {
+  settings = settingsService.settings();
+  $scope.timerDuration = settings.timerDuration;
   $scope.showTimeLeft = false;
   $scope.timerStarted = false;
   $scope.timeLeft = -1; // Display "Timer Expired" when = 0
@@ -100,12 +152,12 @@ angular.module("app", [])
     $scope.showTimeLeft = true;
     $scope.timerStarted = true;
     startTime = new Date().getTime();
-    $scope.timeLeft = $scope.timerDuration * 60 * 1000;
 
     // Add new timer history
     $scope.timerHistory.unshift({start : startTime, end : '- - -'});
 
-    timerDurationMs = $scope.timerDuration * 60 *  1000;
+    timerDurationMs = settings.timerDuration * 60 *  1000;
+    $scope.timeLeft = timerDurationMs;
 
     timerPromise = $interval(function() {
       $scope.timeLeft = timerDurationMs - (new Date().getTime() - startTime);
@@ -126,5 +178,15 @@ angular.module("app", [])
   // Play sound on timer timeout
   $scope.timeOut = function () {
     notificationService.playSound();
+    tasksService.addPomodoro();
   }
-}]);
+}])
+.controller("SettingsCtrl", ['$scope', 'settingsService', function ($scope, settingsService) {
+
+  $scope.settings = settingsService.settings();
+
+  $scope.applySettings = function () {
+    settingsService.persistSettings();
+  }
+}])
+;

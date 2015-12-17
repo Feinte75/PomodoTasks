@@ -14,9 +14,22 @@
   </style>
 </head>
 
-<body>
+<body ng-app="app">
   <header>
     <h1>PomodoTasks</h1>
+    <nav ng-controller="SettingsCtrl">
+      <a href="#openSettings">Settings</a>
+      <div id="openSettings" ng-click="settings()" class="settings">
+        <div>
+          <a href="#" class="closeSettings">X</a>
+          <h1> Settings : </h1>
+          <form>
+            Timer duration <input ng-model="settings.timerDuration"/> (Default : 25)
+            <button ng-click="applySettings()">Apply</button>
+          </form>
+        </div>
+      </div>
+    </nav>
   </header>
 
   <div class='container'>
