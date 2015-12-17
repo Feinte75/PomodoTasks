@@ -11,16 +11,30 @@ angular.module("app", [])
       return tasks;
     },
 
+    archivedTasks : function () {
+      return archivedTasks;
+    },
+
     addTask : function (taskTitle) {
-      tasks.push({title : taskTitle, done : false});
+      tasks.push({title : taskTitle, active : false, date:'', pomodoro:0});
+    },
+
+    addPomodoro : function () {
+      tasks.forEach(function (task) {
+        if(task.active == true) {
+          task.pomodoro += 1;
+        }
+      });
     },
 
     archive : function () {
       var toArchiveTasks = tasks.slice();
       tasks.length = 0;
+      var date = new Date().getTime();
 
       toArchiveTasks.forEach(function (task, index) {
-        if(task.done == true) {
+        if(task.active == true) {
+          task.date = date;
           archivedTasks.push(task);
         }
         else{
@@ -28,14 +42,15 @@ angular.module("app", [])
         }
       });
     },
-    remaining : function () {
-      var done = 0;
+
+    active : function () {
+      var active = 0;
       tasks.forEach( function(task, index) {
-        if(task.done) {
-          done++;
+        if(task.active) {
+          active++;
         }
       });
-      return done;
+      return active;
     }
   };
 })
@@ -54,9 +69,10 @@ angular.module("app", [])
 
     // Bind view tasks to the service data
     $scope.tasks = tasksService.tasks();
+    $scope.archivedTasks = tasksService.archivedTasks();
 
-    $scope.remaining = function () {
-      return tasksService.remaining();
+    $scope.active = function () {
+      return tasksService.active();
     }
 
     $scope.addTask = function () {

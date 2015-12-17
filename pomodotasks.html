@@ -18,28 +18,38 @@
     <h1>PomodoTasks</h1>
   </header>
 
-  <div class='container' ng-app="app">
+  <div class='container'>
     <div class='left-pane' ng-controller="TaskCtrl">
       <h2>Tasks</h2>
-      <span>{{remaining()}} of {{tasks.length}} remaining</span>
+      <span>{{active()}} of {{tasks.length}} active tasks</span>
       [ <a href="" ng-click="archive()">archive</a> ]
-      <ul>
+      <ul class="tasksList">
         <li ng-repeat="task in tasks">
-          <input type="checkbox" ng-model="task.done">
-          <span class="done-{{task.done}}">{{task.title}}</span>
+          -
+          <input type="checkbox" ng-model="task.active">
+          <span class="done-{{task.active}}">{{task.title}} ({{task.pomodoro}})</span>
         </li>
       </ul>
       <form ng-submit="addTask()">
-        <input type="text" ng-model="taskTitle" size="30" placeholder="Add a new item" required>
+        <input type="text" ng-model="taskTitle" size="30" placeholder="Add a new task" required>
         <input type="submit" value="Add">
       </form>
+      <div class="archivedTasks">
+        <h2>Archived Tasks</h2>
+        <ul>
+          <li ng-repeat="archivedTask in archivedTasks">
+            {{archivedTask.title}} archived on {{archivedTask.date | date:"dd:MM"}}
+          </li>
+        </ul>
+      </div>
     </div>
 
     <div class='right-pane' ng-controller="TimerCtrl">
       <h2> Timer </h2>
-      Timer duration :<input ng-disabled="timerStarted" ng-model="timerDuration" type="text" />
-      <button ng-disabled="timerStarted" ng-click="startTimer()">Start timer</button>
-      <button ng-disabled="!timerStarted" ng-click="stopTimer()">Stop timer</button>
+      <form>
+        <button ng-disabled="timerStarted" ng-click="startTimer()">Start timer</button>
+        <button ng-disabled="!timerStarted" ng-click="stopTimer()">Stop timer</button>
+      </form>
 
       <p id="timer" ng-show="timerStarted"> {{timeLeft | date:"mm:ss"}} </p>
       <p id="timer" ng-show="timeLeft === 0"> Timer Expired ! </p>
@@ -50,12 +60,10 @@
             Started : {{pastTimer.start | date:"HH:mm"}} -- Ended : {{pastTimer.end | date:"HH:mm"}}
           </li>
         </ul>
-
       </div>
+    </div>
 
-    </div>
-    <div id="notification">
-    </div>
+    <div id="notification"></div>
 
   </div>
   <footer>
