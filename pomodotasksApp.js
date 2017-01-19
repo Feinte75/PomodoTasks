@@ -16,7 +16,15 @@ function () {
     },
 
     addTask: function (taskTitle) {
-      tasks.push({title: taskTitle, active: false, date: '', pomodoro: 0})
+      var elements = taskTitle.split(' ')
+      var tags = []
+      // Recover tags from task title
+      elements.forEach(function (element) {
+        if (element[0] === '#') {
+          tags.push(element.substring(1))
+        }
+      })
+      tasks.push({title: taskTitle, tags: tags, active: false, date: '', pomodoro: 0})
     },
 
     addPomodoro: function () {
@@ -28,28 +36,22 @@ function () {
     },
 
     archive: function () {
-      var toArchiveTasks = tasks.slice()
-      tasks.length = 0
+      var toArchiveTasks = tasks.filter(function (task) {
+        return task.active
+      })
+      tasks = tasks.filter(function (task) {
+        return !task.active
+      })
       var date = new Date().getTime()
 
       toArchiveTasks.forEach(function (task, index) {
-        if (task.active === true) {
-          task.date = date
-          archivedTasks.push(task)
-        } else {
-          tasks.push(task)
-        }
+        task.date = date
+        archivedTasks.push(task)
       })
     },
 
     active: function () {
-      var active = 0
-      tasks.forEach(function (task, index) {
-        if (task.active) {
-          active++
-        }
-      })
-      return active
+      return tasks.filter(el => el.task.active).length
     }
   }
 })
@@ -57,9 +59,9 @@ function () {
   return {
     playSound: function () {
       $('#notification').html(
-        "<audio autoplay='autoplay'> \
-        <source src='resources/notification.mp3' type='audio/mpeg' /> \
-        </audio>")
+        "<audio autoplay='autoplay'>" +
+        "<source src='resources/notification.mp3' type='audio/mpeg' />" +
+        '</audio>')
     }
   }
 })
@@ -93,8 +95,8 @@ function () {
 
   // Handle settings menu disable when click outside
   function modalClose () {
-    if (location.hash === '#openSettings') {
-      location.hash = ''
+    if (window.location.hash === '#openSettings') {
+      window.location.hash = ''
     }
   }
 
@@ -107,9 +109,10 @@ function () {
     e.stopPropagation()
   }, false)
 
+  // Recover settings from localStorage if present
   for (var setting in defaultSettings) {
     if (defaultSettings.hasOwnProperty(setting)) {
-      var tmp = localStorage.getItem(setting)
+      var tmp = window.localStorage.getItem(setting)
       if (tmp != null) {
         settings[setting] = tmp
       } else {
@@ -126,64 +129,66 @@ function () {
     persistSettings: function () {
       for (var setting in settings) {
         if (settings.hasOwnProperty(setting)) {
-          localStorage.setItem(setting, settings[setting])
+          window.localStorage.setItem(setting, settings[setting])
+          window.location.hash = ''
         }
       }
     }
   }
-
 })
 .controller('TimerCtrl', ['$scope', '$interval', 'notificationService', 'tasksService', 'settingsService',
-function ($scope, $interval, notificationService, tasksService, settingsService) {
-  var settings = settingsService.settings()
-  $scope.timerDuration = settings.timerDuration
-  $scope.showTimeLeft = false
-  $scope.timerStarted = false
-  $scope.timeLeft = -1 // Display "Timer Expired" when = 0
-  $scope.timerHistory = []
-
-  var timerPromise
-  var startTime = 0
-
-  $scope.startTimer = function () {
-    $scope.showTimeLeft = true
-    $scope.timerStarted = true
-    startTime = new Date().getTime()
-
-    // Add new timer history
-    $scope.timerHistory.unshift({start: startTime, end: '- - -'})
-
-    var timerDurationMs = settings.timerDuration * 60 * 1000
-    $scope.timeLeft = timerDurationMs
-
-    timerPromise = $interval(function () {
-      $scope.timeLeft = timerDurationMs - (new Date().getTime() - startTime)
-      if ($scope.timeLeft <= 0) {
-        $scope.timeOut()
-        $scope.stopTimer()
-      }
-    }, 1000)
-  }
-
-  $scope.stopTimer = function () {
+  function ($scope, $interval, notificationService, tasksService, settingsService) {
+    var settings = settingsService.settings()
+    $scope.timerDuration = settings.timerDuration
+    $scope.showTimeLeft = false
     $scope.timerStarted = false
-    $scope.timeLeft = 0
-    $scope.timerHistory[0].end = new Date().getTime()
-    $interval.cancel(timerPromise)
-  }
+    $scope.timeLeft = -1 // Display "Timer Expired" when = 0
+    $scope.timerHistory = []
 
-  // Play sound on timer timeout
-  $scope.timeOut = function () {
-    if (settings.playSound === true) {
-      notificationService.playSound()
+    var timerPromise
+    var startTime = 0
+
+    $scope.startTimer = function () {
+      $scope.showTimeLeft = true
+      $scope.timerStarted = true
+      startTime = new Date().getTime()
+
+      // Add new timer history
+      $scope.timerHistory.unshift({start: startTime, end: '- - -'})
+
+      var timerDurationMs = settings.timerDuration * 60 * 1000
+      $scope.timeLeft = timerDurationMs
+
+      timerPromise = $interval(function () {
+        $scope.timeLeft = timerDurationMs - (new Date().getTime() - startTime)
+        if ($scope.timeLeft <= 0) {
+          $scope.timeOut()
+          $scope.stopTimer()
+        }
+      }, 1000)
     }
-    tasksService.addPomodoro()
+
+    $scope.stopTimer = function () {
+      $scope.timerStarted = false
+      $scope.timeLeft = 0
+      $scope.timerHistory[0].end = new Date().getTime()
+      $interval.cancel(timerPromise)
+    }
+
+    // Play sound on timer timeout
+    $scope.timeOut = function () {
+      if (settings.playSound === true) {
+        notificationService.playSound()
+      }
+      tasksService.addPomodoro()
+    }
   }
-}])
+])
 .controller('SettingsCtrl', ['$scope', 'settingsService', function ($scope, settingsService) {
   $scope.settings = settingsService.settings()
 
   $scope.applySettings = function () {
     settingsService.persistSettings()
+    window.location.hash = ''
   }
 }])

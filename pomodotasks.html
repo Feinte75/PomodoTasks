@@ -17,26 +17,11 @@
 <body ng-app="app">
   <header>
     <h1>PomodoTasks</h1>
-    <nav ng-controller="SettingsCtrl">
-      <a href="#openSettings">Settings</a>
-      <div id="openSettings" ng-click="settings()" class="settings">
-        <div>
-          <a href="#" class="closeSettings">X</a>
-          <h1> Settings : </h1>
-          <form>
-            <ul>
-              <li>Timer duration <input ng-model="settings.timerDuration"/></li>
-              <li>Play sound on timer end <input type="checkbox" ng-model="settings.playSound"></li>
-              <li><button ng-click="applySettings()">Apply</button></li>
-          </form>
-        </div>
-      </div>
-    </nav>
   </header>
 
   <div class='container'>
     <div class='left-pane' ng-controller="TaskCtrl">
-      <h2>Tasks</h2>
+      <h2>Backlog</h2>
       <span>{{active()}} of {{tasks.length}} active tasks</span>
       [ <a href="" ng-click="archive()">archive</a> ]
       <ul class="tasksList">
@@ -50,8 +35,9 @@
         <input type="text" ng-model="taskTitle" size="30" placeholder="Add a new task" required>
         <input type="submit" value="Add">
       </form>
+      -------------------------------------------------
+      <h2>Done</h2>
       <div class="archivedTasks">
-        <h2>Archived Tasks</h2>
         <ul>
           <li ng-repeat="archivedTask in archivedTasks">
             {{archivedTask.title}} archived on {{archivedTask.date | date:"dd:MM"}}
@@ -83,12 +69,28 @@
 
   </div>
   <footer>
-    <p> Made with <a href="https://angularjs.org/" target="_blank"> AngularJs </a> </p>
-    <p>
-      Code available on Github !
-      <br/>
-      <a href="https://github.com/Feinte75/PomodoTasks" target="_blank">Check it out</a>
-    </p>
-  </footer>
-</body>
-</html>
+    <nav ng-controller="SettingsCtrl">
+      <a href="#openSettings">Settings</a>
+      <div id="openSettings" ng-click="settings()" class="settings">
+        <div>
+          <a href="#" class="closeSettings">X</a>
+          <h1> Settings : </h1>
+          <form>
+            <ul>
+              <li>Timer duration <input ng-model="settings.timerDuration"/></li>
+              <li>Play sound on timer end <input type="checkbox" ng-model="settings.playSound"></li>
+              <li><button ng-click="applySettings()">Apply</button></li>
+            </form>
+          </div>
+        </div>
+        <br />
+      </nav>
+      <p> Made with <a href="https://angularjs.org/" target="_blank"> AngularJs </a> </p>
+      <p>
+        Code available on Github !
+        <br/>
+        <a href="https://github.com/Feinte75/PomodoTasks" target="_blank">Check it out</a>
+      </p>
+    </footer>
+  </body>
+  </html>
