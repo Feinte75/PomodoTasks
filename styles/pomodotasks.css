@@ -63,7 +63,6 @@ nav .settings form ul li {
 h1 {
   font-family: ‘Courier New’, Courier, monospace;
   font-size: 2.5em;
-  color: rgb(30, 0, 57);
 }
 
 h2 {
@@ -98,6 +97,16 @@ h2 {
   color: rgba(170, 0, 0, 1);
 }
 
+.left-pane .taskForm {
+  display: block;
+  text-align: center;
+}
+
+.left-pane .taskForm input[type=number] {
+  margin: 10px;
+  width: 3em;
+}
+
 .left-pane .archivedTasks {
   margin: 40px 0px;
   text-align: left;
@@ -109,6 +118,11 @@ h2 {
   vertical-align: top;
   text-align: center;
   margin: 0px 20px 20px;
+}
+
+.right-pane .timerControls > form > button{
+  margin: 5px;
+
 }
 
 #timer {

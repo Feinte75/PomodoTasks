@@ -31,8 +31,9 @@
           <span class="done-{{task.active}}">{{task.title}} ({{task.pomodoro}})</span>
         </li>
       </ul>
-      <form ng-submit="addTask()">
+      <form class='taskForm' ng-submit="addTask()">
         <input type="text" ng-model="taskTitle" size="30" placeholder="Add a new task" required>
+        Estimated Pomo : <input type="number" min="1" ng-model="estimatedPomo" required>
         <input type="submit" value="Add">
       </form>
       -------------------------------------------------
@@ -40,7 +41,7 @@
       <div class="archivedTasks">
         <ul>
           <li ng-repeat="archivedTask in archivedTasks">
-            {{archivedTask.title}} archived on {{archivedTask.date | date:"dd:MM"}}
+            Task <em>{{archivedTask.title}}</em>  finished in {{archivedTask.pomodoro}} pomodoros at {{archivedTask.date | date:"dd:MM"}} (Estimated : {{archivedTask.estimatedPomo}})
           </li>
         </ul>
       </div>
@@ -48,18 +49,23 @@
 
     <div class='right-pane' ng-controller="TimerCtrl">
       <h2> Timer </h2>
-      <form>
-        <button ng-disabled="timerStarted" ng-click="startTimer()">Start timer</button>
-        <button ng-disabled="!timerStarted" ng-click="stopTimer()">Stop timer</button>
-      </form>
-
+      <div class='timerControls'>
+        <form>
+          <button ng-disabled="timerStarted" ng-click="startTimer('pomodoro')">Start pomodoro</button>
+          <button ng-disabled="timerStarted" ng-click="startTimer('smallBreak')">Start small break</button>
+          <button ng-disabled="timerStarted" ng-click="startTimer('longBreak')">Start long break</button>
+          <button ng-disabled="!timerStarted" ng-click="stopTimer()">Stop timer</button>
+        </form>
+      </div>
       <p id="timer" ng-show="timerStarted"> {{timeLeft | date:"mm:ss"}} </p>
       <p id="timer" ng-show="timeLeft === 0"> Timer Expired ! </p>
-
+      
+      -------------------------------------------------
+      <h2>Timer Log</h2>
       <div class="timerHistory">
         <ul>
           <li ng-repeat="pastTimer in timerHistory">
-            Started : {{pastTimer.start | date:"HH:mm"}} -- Ended : {{pastTimer.end | date:"HH:mm"}}
+            Started : {{pastTimer.start | date:"HH:mm"}} -- Ended : {{pastTimer.end | date:"HH:mm"}} ({{pastTimer.type}})
           </li>
         </ul>
       </div>
@@ -77,7 +83,9 @@
           <h1> Settings : </h1>
           <form>
             <ul>
-              <li>Timer duration <input ng-model="settings.timerDuration"/></li>
+              <li>Pomodoro timer duration <input ng-model="settings.pomodoroTimerDuration"/></li>
+              <li>Small break timer duration <input ng-model="settings.smallBreakTimerDuration"/></li>
+              <li>Long break timer duration <input ng-model="settings.longBreakTimerDuration"/></li>
               <li>Play sound on timer end <input type="checkbox" ng-model="settings.playSound"></li>
               <li><button ng-click="applySettings()">Apply</button></li>
             </form>

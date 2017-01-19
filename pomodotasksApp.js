@@ -15,7 +15,7 @@ function () {
       return archivedTasks
     },
 
-    addTask: function (taskTitle) {
+    addTask: function (taskTitle, estimatedPomo) {
       var elements = taskTitle.split(' ')
       var tags = []
       // Recover tags from task title
@@ -24,34 +24,27 @@ function () {
           tags.push(element.substring(1))
         }
       })
-      tasks.push({title: taskTitle, tags: tags, active: false, date: '', pomodoro: 0})
+      tasks.push({title: taskTitle, tags: tags, estimatedPomo: estimatedPomo, active: false, date: '', pomodoro: 0})
     },
 
     addPomodoro: function () {
-      tasks.forEach(function (task) {
-        if (task.active === true) {
-          task.pomodoro += 1
-        }
-      })
+      tasks.filter(task => task.active).forEach(task => { task.pomodoro += 1 })
     },
 
     archive: function () {
-      var toArchiveTasks = tasks.filter(function (task) {
-        return task.active
-      })
-      tasks = tasks.filter(function (task) {
-        return !task.active
-      })
+      var toArchiveTasks = tasks.filter(task => task.active)
+
+      tasks = tasks.filter(task => !task.active)
       var date = new Date().getTime()
 
-      toArchiveTasks.forEach(function (task, index) {
+      toArchiveTasks.forEach(function (task) {
         task.date = date
         archivedTasks.push(task)
       })
     },
 
     active: function () {
-      return tasks.filter(el => el.task.active).length
+      return tasks.filter(task => task.active).length
     }
   }
 })
@@ -65,29 +58,32 @@ function () {
     }
   }
 })
-.controller('TaskCtrl', ['$scope', 'tasksService', function ($scope, tasksService) {
-  // Bind view tasks to the service data
-  $scope.tasks = tasksService.tasks()
-  $scope.archivedTasks = tasksService.archivedTasks()
+  .controller('TaskCtrl', ['$scope', 'tasksService', function ($scope, tasksService) {
+    // Bind view tasks to the service data
+    $scope.tasks = tasksService.tasks()
+    $scope.archivedTasks = tasksService.archivedTasks()
 
-  $scope.active = function () {
-    return tasksService.active()
-  }
+    $scope.active = function () {
+      return tasksService.active()
+    }
 
-  $scope.addTask = function () {
-    tasksService.addTask($scope.taskTitle)
-    $scope.taskTitle = ''
-  }
+    $scope.addTask = function () {
+      tasksService.addTask($scope.taskTitle, $scope.estimatedPomo)
+      $scope.taskTitle = ''
+    }
 
-  // Remove checked tasks
-  $scope.archive = function () {
-    tasksService.archive()
+    // Remove checked tasks
+    $scope.archive = function () {
+      tasksService.archive()
+      $scope.tasks = tasksService.tasks()
+    }
   }
-}
-])
+  ])
 .service('settingsService', function () {
   var defaultSettings = {
-    timerDuration: 0.01,
+    pomodoroTimerDuration: 0.01,
+    smallBreakTimerDuration: 0.01,
+    longBreakTimerDuration: 0.01,
     playSound: true
   }
 
@@ -139,7 +135,7 @@ function () {
 .controller('TimerCtrl', ['$scope', '$interval', 'notificationService', 'tasksService', 'settingsService',
   function ($scope, $interval, notificationService, tasksService, settingsService) {
     var settings = settingsService.settings()
-    $scope.timerDuration = settings.timerDuration
+    $scope.timerDuration = settings.pomodoroTimerDuration
     $scope.showTimeLeft = false
     $scope.timerStarted = false
     $scope.timeLeft = -1 // Display "Timer Expired" when = 0
@@ -148,15 +144,31 @@ function () {
     var timerPromise
     var startTime = 0
 
-    $scope.startTimer = function () {
+    $scope.startTimer = function (timerType) {
+      var timerDuration = 0
+      switch (timerType) {
+        case 'pomodoro':
+          timerDuration = settings.pomodoroTimerDuration
+          break
+        case 'smallBreak':
+          timerDuration = settings.smallBreakTimerDuration
+          break
+        case 'longBreak':
+          timerDuration = settings.longBreakTimerDuration
+          break
+        default:
+          console.log('Invalid timer type')
+      }
+      $scope.timerType = timerType
+
       $scope.showTimeLeft = true
       $scope.timerStarted = true
       startTime = new Date().getTime()
 
-      // Add new timer history
-      $scope.timerHistory.unshift({start: startTime, end: '- - -'})
+    // Add new timer history
+      $scope.timerHistory.unshift({start: startTime, end: '- - -', type: timerType})
 
-      var timerDurationMs = settings.timerDuration * 60 * 1000
+      var timerDurationMs = timerDuration * 60 * 1000
       $scope.timeLeft = timerDurationMs
 
       timerPromise = $interval(function () {
@@ -175,12 +187,14 @@ function () {
       $interval.cancel(timerPromise)
     }
 
-    // Play sound on timer timeout
+  // Play sound on timer timeout
     $scope.timeOut = function () {
       if (settings.playSound === true) {
         notificationService.playSound()
       }
-      tasksService.addPomodoro()
+      if ($scope.timerType === 'pomodoro') {
+        tasksService.addPomodoro()
+      }
     }
   }
 ])
