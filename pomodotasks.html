@@ -59,7 +59,10 @@
       </div>
       <p id="timer" ng-show="timerStarted"> {{timeLeft | date:"mm:ss"}} </p>
       <p id="timer" ng-show="timeLeft === 0"> Timer Expired ! </p>
-      
+      <div>
+        <progress ng-show="timerStarted" class='inline-block' max='{{timerDurationMs}}' value='{{timeLeft}}'></progress>
+      </div>
+
       -------------------------------------------------
       <h2>Timer Log</h2>
       <div class="timerHistory">
@@ -72,7 +75,6 @@
     </div>
 
     <div id="notification"></div>
-
   </div>
   <footer>
     <nav ng-controller="SettingsCtrl">

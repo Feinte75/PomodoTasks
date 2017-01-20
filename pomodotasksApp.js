@@ -168,11 +168,11 @@ function () {
     // Add new timer history
       $scope.timerHistory.unshift({start: startTime, end: '- - -', type: timerType})
 
-      var timerDurationMs = timerDuration * 60 * 1000
-      $scope.timeLeft = timerDurationMs
+      $scope.timerDurationMs = timerDuration * 60 * 1000
+      $scope.timeLeft = $scope.timerDurationMs
 
       timerPromise = $interval(function () {
-        $scope.timeLeft = timerDurationMs - (new Date().getTime() - startTime)
+        $scope.timeLeft = $scope.timerDurationMs - (new Date().getTime() - startTime)
         if ($scope.timeLeft <= 0) {
           $scope.timeOut()
           $scope.stopTimer()
